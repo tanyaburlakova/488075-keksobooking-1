@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Tanya Burlakova](https://up.htmlacademy.ru/javascript/12/user/488075).
-* Наставник: `Неизвестно`.
+* Наставник: `Борис Ванюшин`.
 
 ---
 
