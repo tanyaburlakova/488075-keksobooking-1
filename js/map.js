@@ -103,16 +103,16 @@ var generateData = function () {
 };
 
 var generatePins = function (pin) {
-  var button = document.createElement('button');
-  var buttonSize = 40;
+  var newPin = document.createElement('button');
+  var pinSize = 40;
 
-  button.style.left = pin.location.x - buttonSize / 2 + 'px';
-  button.style.top = pin.location.y - buttonSize / 2 + 'px';
-  button.classList = 'map__pin';
+  newPin.style.left = pin.location.x - pinSize / 2 + 'px';
+  newPin.style.top = pin.location.y - pinSize / 2 + 'px';
+  newPin.classList = 'map__pin';
 
-  button.innerHTML = '<img src="' + pin.author.avatar + '" width="' + buttonSize + '" height="' + buttonSize + '" draggable="false">';
+  newPin.innerHTML = '<img src="' + pin.author.avatar + '" width="' + pinSize + '" height="' + pinSize + '" draggable="false">';
 
-  return button;
+  return newPin;
 };
 
 var generateCards = function (card) {
