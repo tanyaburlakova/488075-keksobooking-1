@@ -175,7 +175,7 @@ var KEYCODE = {
 
 var MAIN_PIN = {
   size: 62,
-  corner_size: 22,
+  cornerSize: 22,
 };
 
 var mainPin = map.querySelector('.map__pin--main');
@@ -188,8 +188,8 @@ var formFieldsets = form.querySelectorAll('.form__element');
 var address = document.getElementsByName('address')[0];
 
 var init = function () {
-  var mainPinX = mainPinRect.x + MAIN_PIN.size/2;
-  var mainPinY = mainPinRect.y + MAIN_PIN.size/2;
+  var mainPinX = mainPinRect.x + MAIN_PIN.size / 2;
+  var mainPinY = mainPinRect.y + MAIN_PIN.size / 2;
 
   address.value = 'x: ' + mainPinX + ' y: ' + mainPinY;
 };
@@ -207,8 +207,8 @@ var addClass = function (collection, className) {
 };
 
 var activeStateAddHandler = function () {
-  var mainPinX = mainPinRect.x + MAIN_PIN.size/2;
-  var mainPinY = mainPinRect.y + MAIN_PIN.size + MAIN_PIN.corner_size;
+  var mainPinX = mainPinRect.x + MAIN_PIN.size / 2;
+  var mainPinY = mainPinRect.y + MAIN_PIN.size + MAIN_PIN.cornerSize;
 
   map.classList.remove('map--faded');
   form.classList.remove('notice__form--disabled');
