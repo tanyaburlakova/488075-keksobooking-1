@@ -585,6 +585,10 @@ textarea:focus
     min-height: 90px;
 }
 
+.form__element .error {
+    border-color: red;
+}
+
 #timein {
     margin-right: 14px;
 }
