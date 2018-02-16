@@ -1,5 +1,13 @@
 'use strict';
 
+var KEYCODES = {
+  enter: 13,
+  esc: 27,
+};
+var MAIN_PIN = {
+  size: 62,
+  cornerSize: 22,
+};
 var APARTMENTS_COUNT = 8;
 var APARTMENTS_DESCRIPTION = [
   'Большая уютная квартира',
@@ -29,6 +37,11 @@ var APARTMENTS_TYPE = [
   'house',
   'bungalo',
 ];
+
+var CLASSES = {
+  pinActive: 'active',
+};
+
 var APARTMENTS_MIN_PRICE = 1000;
 var APARTMENTS_MAX_PRICE = 1000000;
 var APARTMENTS_MIN_ROOMS = 1;
@@ -53,6 +66,12 @@ var getRandomNumber = function (min, max) {
 
 var getRandomItem = function (collection) {
   return collection[Math.floor(Math.random() * collection.length)];
+};
+
+var removeClass = function (collection, className) {
+  collection.forEach(function (item) {
+    item.classList.remove(className);
+  });
 };
 
 var getRandomLengthArray = function (collection) {
@@ -102,117 +121,84 @@ var generateData = function () {
   }
 };
 
-var generatePins = function (pin) {
+var generatePins = function (pin, index) {
   var newPin = document.createElement('button');
   var pinSize = 40;
 
   newPin.style.left = pin.location.x - pinSize / 2 + 'px';
   newPin.style.top = pin.location.y - pinSize / 2 + 'px';
-  newPin.classList = 'map__pin map__pin--similar hidden';
+  newPin.classList = 'map__pin map__pin--similar';
+  newPin.setAttribute('data-index', index);
 
   newPin.innerHTML = '<img src="' + pin.author.avatar + '" width="' + pinSize + '" height="' + pinSize + '" draggable="false">';
 
   return newPin;
 };
 
-var generateCards = function (card) {
-  var newCard = cardTemplate.cloneNode(true);
-  var futuriesList = newCard.querySelector('.popup__features');
+var generatePopup = function (index) {
+  var newPopup = cardTemplate.cloneNode(true);
+  var futuriesList = newPopup.querySelector('.popup__features');
 
   futuriesList.innerHTML = '';
-  newCard.querySelector('.popup__avatar').src = card.author.avatar;
-  newCard.getElementsByTagName('h3')[0].textContent = card.offer.title;
-  newCard.querySelector('.popup__price').innerHTML = card.offer.price + '&#x20bd;/ночь';
-  newCard.getElementsByTagName('h4')[0].textContent = card.offer.type;
-  newCard.getElementsByTagName('p')[0].textContent = card.offer.rooms + ' для ' + card.offer.guests + ' гостей';
-  newCard.getElementsByTagName('p')[2].textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
-  newCard.getElementsByTagName('p')[3].textContent = card.offer.description;
-  newCard.classList.add('hidden');
+  newPopup.querySelector('.popup__avatar').src = similarAds[index].author.avatar;
+  newPopup.getElementsByTagName('h3')[0].textContent = similarAds[index].offer.title;
+  newPopup.querySelector('.popup__price').innerHTML = similarAds[index].offer.price + '&#x20bd;/ночь';
+  newPopup.getElementsByTagName('h4')[0].textContent = similarAds[index].offer.type;
+  newPopup.getElementsByTagName('p')[0].textContent = similarAds[index].offer.rooms + ' для ' + similarAds[index].offer.guests + ' гостей';
+  newPopup.getElementsByTagName('p')[2].textContent = 'Заезд после ' + similarAds[index].offer.checkin + ', выезд до ' + similarAds[index].offer.checkout;
+  newPopup.getElementsByTagName('p')[3].textContent = similarAds[index].offer.description;
 
-  for (var i = 0; i < card.offer.features.length; i++) {
+  similarAds[index].offer.features.forEach(function (item) {
     var listElem = document.createElement('li');
 
-    listElem.classList = 'feature feature--' + card.offer.features[i];
+    listElem.classList = 'feature feature--' + similarAds[index].offer.features[item];
 
     futuriesList.appendChild(listElem);
-  }
+  });
 
   futuriesList.replaceWith(futuriesList);
 
-  return newCard;
+  return newPopup;
 };
 
 var renderPins = function () {
-  generateData();
-
-  for (var i = 0; i < similarAds.length; i++) {
-    fragment.appendChild(generatePins(similarAds[i]));
-  }
+  Array.from(similarAds).forEach(function (item, index) {
+    fragment.appendChild(generatePins(item, index));
+  });
 
   pins.appendChild(fragment);
 };
 
-var renderCards = function () {
-  generateData();
-
-  for (var i = 0; i < similarAds.length; i++) {
-    fragment.appendChild(generateCards(similarAds[i]));
-  }
-
+var renderPopup = function (index) {
+  fragment.appendChild(generatePopup(index));
   map.insertBefore(fragment, document.querySelector('.map__filters-container'));
 };
 
-renderPins();
-renderCards();
+generateData();
 
-
-// Show/hide cards
-
-var KEYCODE = {
-  enter: 13,
-  esc: 27,
-};
-
-var MAIN_PIN = {
-  size: 62,
-  cornerSize: 22,
-};
+// Show/hide popups
 
 var mainPin = map.querySelector('.map__pin--main');
 var mainPinRect = mainPin.getBoundingClientRect();
-var similarPins = map.querySelectorAll('.map__pin--similar');
-var popups = map.querySelectorAll('.map__card');
 
 var form = document.querySelector('.notice__form');
 var formFieldsets = form.querySelectorAll('.form__element');
 var address = document.getElementsByName('address')[0];
 
-var init = function () {
+var initForm = function () {
   var mainPinX = mainPinRect.x + MAIN_PIN.size / 2;
   var mainPinY = mainPinRect.y + MAIN_PIN.size / 2;
 
   address.value = 'x: ' + mainPinX + ' y: ' + mainPinY;
 };
 
-var removeClass = function (collection, className) {
-  collection.forEach(function (item) {
-    item.classList.remove(className);
-  });
-};
-
-var addClass = function (collection, className) {
-  collection.forEach(function (item) {
-    item.classList.add(className);
-  });
-};
-
-var activeStateAddHandler = function () {
+var pinsAddHandler = function () {
   var mainPinX = mainPinRect.x + MAIN_PIN.size / 2;
   var mainPinY = mainPinRect.y + MAIN_PIN.size + MAIN_PIN.cornerSize;
 
   map.classList.remove('map--faded');
   form.classList.remove('notice__form--disabled');
-  removeClass(similarPins, 'hidden');
+  renderPins();
 
   address.value = 'x: ' + mainPinX + ' y: ' + mainPinY;
 
@@ -221,52 +207,71 @@ var activeStateAddHandler = function () {
   });
 };
 
-var popupCloseHandler = function (element) {
-  element.parentNode.classList.add('hidden');
-  removeClass(similarPins, 'map__pin--active');
+var removePinsActiveState = function () {
+  var similarPins = map.querySelectorAll('.map__pin--similar');
+
+  removeClass(similarPins, CLASSES.pinActive);
 };
 
-var popupShowHandler = function (index) {
-  var closer = popups[index].querySelector('.popup__close');
+var popupRemoveHandler = function (popup) {
+  popup.remove();
+  removePinsActiveState();
+};
 
-  popups[index].classList.remove('hidden');
+var popupAddHandlers = function () {
+  var popup = map.querySelector('.popup');
+  var closer = popup.querySelector('.popup__close');
 
-  closer.addEventListener('click', function (event) {
-    popupCloseHandler(event.target);
+  closer.addEventListener('click', function () {
+    popupRemoveHandler(popup);
   });
 
   closer.addEventListener('keydown', function (event) {
-    if (event.keyCode === KEYCODE.enter) {
-      popupCloseHandler(event.target);
+    if (event.keyCode === KEYCODES.enter) {
+      popupRemoveHandler(popup);
     }
   });
 
   document.addEventListener('keydown', function (event) {
-    if (event.keyCode === KEYCODE.esc) {
-      popupCloseHandler(event.target);
+    if (event.keyCode === KEYCODES.esc) {
+      popupRemoveHandler(popup);
     }
   });
 };
 
-var showActivePinStateHandler = function (current, index) {
-  removeClass(similarPins, 'map__pin--active');
-  addClass(popups, 'hidden');
-  popupShowHandler(index);
-  current.classList.add('map__pin--active');
+var addPinActiveStateHandler = function (current, index) {
+  var popup = map.querySelector('.popup');
+
+  if (popup) {
+    popupRemoveHandler(popup);
+  }
+
+  removePinsActiveState();
+  current.classList.add(CLASSES.pinActive);
+  renderPopup(index);
+  popupAddHandlers();
 };
 
-init();
+initForm();
 
-mainPin.addEventListener('mouseup', activeStateAddHandler);
+mainPin.addEventListener('mouseup', pinsAddHandler);
 
-similarPins.forEach(function (item, index) {
-  item.addEventListener('click', function () {
-    showActivePinStateHandler(item, index);
-  });
+pins.addEventListener('click', function (event) {
+  var target = event.target.parentNode;
 
-  item.addEventListener('keydown', function (event) {
-    if (event.keyCode === KEYCODE.enter) {
-      showActivePinStateHandler(item, index);
-    }
-  });
+  if (target.classList.contains('map__pin--similar')) {
+    var index = target.getAttribute('data-index');
+
+    addPinActiveStateHandler(target, index);
+  }
+});
+
+pins.addEventListener('keydown', function (event) {
+  var target = event.target;
+
+  if (target.classList.contains('map__pin--similar') && event.keyCode === KEYCODES.enter) {
+    var index = target.getAttribute('data-index');
+
+    addPinActiveStateHandler(target, index);
+  }
 });
