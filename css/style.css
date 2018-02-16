@@ -270,13 +270,15 @@ textarea:focus
 }
 
 .map__pin:not(.map__pin--main):hover::after,
+.map__pin:not(.map__pin--main).active::after,
 .map__pin:not(.map__pin--main):active::after
 
 {
     background-position: 0 -88px;
 }
 
-.map__pin:active img
+.map__pin:active img,
+.map__pin.active img
 {
     box-shadow: 0 0 15px 15px rgba(255, 86, 53, .7);
 }
