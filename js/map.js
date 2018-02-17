@@ -40,6 +40,7 @@ var APARTMENTS_TYPE = [
 
 var CLASSES = {
   pinActive: 'active',
+  error: 'error',
 };
 
 var APARTMENTS_MIN_PRICE = 1000;
@@ -69,7 +70,7 @@ var getRandomItem = function (collection) {
 };
 
 var removeClass = function (collection, className) {
-  collection.forEach(function (item) {
+  Array.from(collection).forEach(function (item) {
     item.classList.remove(className);
   });
 };
@@ -182,15 +183,11 @@ var mainPin = map.querySelector('.map__pin--main');
 var mainPinRect = mainPin.getBoundingClientRect();
 
 var form = document.querySelector('.notice__form');
+var submit = form.querySelector('.form__submit');
 var formFieldsets = form.querySelectorAll('.form__element');
 var address = document.getElementsByName('address')[0];
-
-var initForm = function () {
-  var mainPinX = mainPinRect.x + MAIN_PIN.size / 2;
-  var mainPinY = mainPinRect.y + MAIN_PIN.size / 2;
-
-  address.value = 'x: ' + mainPinX + ' y: ' + mainPinY;
-};
+var price = document.getElementsByName('price')[0];
+var title = document.getElementsByName('title')[0];
 
 var pinsAddHandler = function () {
   var mainPinX = mainPinRect.x + MAIN_PIN.size / 2;
@@ -252,8 +249,6 @@ var addPinActiveStateHandler = function (current, index) {
   popupAddHandlers();
 };
 
-initForm();
-
 mainPin.addEventListener('mouseup', pinsAddHandler);
 
 pins.addEventListener('click', function (event) {
@@ -275,8 +270,6 @@ pins.addEventListener('keydown', function (event) {
     addPinActiveStateHandler(target, index);
   }
 });
-
-var submitButton = form.querySelector('.form__submit');
 
 var linkedValues = {
   'type': {
@@ -314,12 +307,10 @@ var linkedValues = {
   },
 };
 
-form.addEventListener('change', function (event) {
+var synkFields = function (event) {
   var target = event.target;
 
-  if (target.validity.valid) {
-    target.classList.remove('error');
-  }
+  fieldValidation(target);
 
   if (!target.classList.contains('linked-control')) {
     return;
@@ -345,16 +336,47 @@ form.addEventListener('change', function (event) {
       }
     }
   }
+};
+
+var fieldValidation = function (field) {
+  if (field.validity.valid) {
+    field.classList.remove(CLASSES.error);
+  } else {
+    field.classList.add(CLASSES.error);
+  }
+};
+
+var formValidation = function () {
+  Array.from(form.elements).forEach(function (item) {
+    fieldValidation(item);
+  });
+};
+
+var checkTitleHandler = function () {
+  if (title.validity.tooShort) {
+    title.setCustomValidity('Название должно быть не менее 30 символов!');
+  } else if (title.validity.tooLong) {
+    title.setCustomValidity('Название должно быть не более 100 символов!');
+  } else if (title.validity.valueMissing) {
+    title.setCustomValidity('Обязательное поле!');
+  } else {
+    title.setCustomValidity('');
+  }
+};
+
+var initForm = function () {
+  var mainPinX = mainPinRect.x + MAIN_PIN.size / 2;
+  var mainPinY = mainPinRect.y + MAIN_PIN.size / 2;
+
+  address.value = 'x: ' + mainPinX + ' y: ' + mainPinY;
+  price.value = '1000';
+};
+
+initForm();
+
+form.addEventListener('change', function (event) {
+  synkFields(event);
 });
 
-submitButton.addEventListener('click', function (event) {
-  if (form.checkValidity()) {
-    form.submit();
-  } else {
-    for (var i = 0; i < form.elements.length; i++) {
-      if (!form.elements[i].validity.valid) {
-        form.elements[i].classList.add('error');
-      }
-    }
-  }
-});
+title.addEventListener('invalid', checkTitleHandler);
+submit.addEventListener('click', formValidation);
