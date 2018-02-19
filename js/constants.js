@@ -1,0 +1,19 @@
+'use strict';
+
+(function () {
+  var ENTER_KEYCODE = 13;
+  var ESC_KEYCODE = 27;
+  var MAIN_PIN_SIZE = 62;
+  var MAIN_PIN_CORNER_SIZE = 22;
+  var PIN_ACTIVE_CLASS = 'active';
+  var ERROR_CLASS = 'error';
+
+  window.constants = {
+    ENTER_KEYCODE: ENTER_KEYCODE,
+    ESC_KEYCODE: ESC_KEYCODE,
+    MAIN_PIN_SIZE: MAIN_PIN_SIZE,
+    MAIN_PIN_CORNER_SIZE: MAIN_PIN_CORNER_SIZE,
+    PIN_ACTIVE_CLASS: PIN_ACTIVE_CLASS,
+    ERROR_CLASS: ERROR_CLASS,
+  };
+})();
