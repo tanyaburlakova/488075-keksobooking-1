@@ -43,6 +43,27 @@ var CLASSES = {
   error: 'error',
 };
 
+var FIELDS_LIMITS = {
+  title: {
+    min: 30,
+    max: 100,
+  },
+  price: {
+    min: 0,
+    max: 1000000,
+  }
+};
+
+var ERROR_MESSAGES = {
+  required: 'Обязательное поле!',
+  getMinLengthErrorText: function (val) {
+    return 'Длина поля должна быть не менее ' + val + ' символов!'
+  },
+  getMaxLengthErrorText: function (val) {
+    return 'Длина поля должна быть не более ' + val + ' символов!'
+  },
+};
+
 var APARTMENTS_MIN_PRICE = 1000;
 var APARTMENTS_MAX_PRICE = 1000000;
 var APARTMENTS_MIN_ROOMS = 1;
@@ -185,9 +206,10 @@ var mainPinRect = mainPin.getBoundingClientRect();
 var form = document.querySelector('.notice__form');
 var submit = form.querySelector('.form__submit');
 var formFieldsets = form.querySelectorAll('.form__element');
-var address = document.getElementsByName('address')[0];
-var price = document.getElementsByName('price')[0];
-var title = document.getElementsByName('title')[0];
+var address = form.querySelectorAll('input[name=address]')[0];
+var price = form.querySelectorAll('input[name=price]')[0];
+var title = form.querySelectorAll('input[name=title]')[0];
+var type = form.querySelectorAll('select[name=type]')[0];
 
 var pinsAddHandler = function () {
   var mainPinX = mainPinRect.x + MAIN_PIN.size / 2;
@@ -307,10 +329,10 @@ var linkedValues = {
   },
 };
 
-var synkFields = function (event) {
+var syncFields = function (event) {
   var target = event.target;
 
-  fieldValidation(target);
+  highlightValidity(target);
 
   if (!target.classList.contains('linked-control')) {
     return;
@@ -338,7 +360,7 @@ var synkFields = function (event) {
   }
 };
 
-var fieldValidation = function (field) {
+var highlightValidity = function (field) {
   if (field.validity.valid) {
     field.classList.remove(CLASSES.error);
   } else {
@@ -346,22 +368,47 @@ var fieldValidation = function (field) {
   }
 };
 
-var formValidation = function () {
-  Array.from(form.elements).forEach(function (item) {
-    fieldValidation(item);
-  });
+var checkFieldLength = function (element, min, max) {
+  if (element.value.length < min) {
+    element.setCustomValidity(ERROR_MESSAGES.getMinLengthErrorText(min));
+    return;
+  } if (element.value.length > max) {
+    element.setCustomValidity(ERROR_MESSAGES.getMinLengthErrorText(max));
+  } else {
+    element.setCustomValidity('');
+  }
+};
+
+var checkFieldRequired = function (element) {
+  if (element.validity.valueMissing) {
+    element.setCustomValidity(ERROR_MESSAGES.required);
+  } else {
+    element.setCustomValidity('');
+  }
 };
 
 var checkTitleHandler = function () {
-  if (title.validity.tooShort) {
-    title.setCustomValidity('Название должно быть не менее 30 символов!');
-  } else if (title.validity.tooLong) {
-    title.setCustomValidity('Название должно быть не более 100 символов!');
-  } else if (title.validity.valueMissing) {
-    title.setCustomValidity('Обязательное поле!');
-  } else {
-    title.setCustomValidity('');
-  }
+  checkFieldLength(title, FIELDS_LIMITS.title.min, FIELDS_LIMITS.title.max);
+  checkFieldRequired(title);
+};
+
+var checkPriceHandler = function () {
+  checkFieldLength(price, FIELDS_LIMITS.price.min, FIELDS_LIMITS.price.max);
+  checkFieldRequired(price);
+};
+
+var checkTypeHandler = function () {
+  checkFieldRequired(type);
+};
+
+var checkFormValidityHandler = function () {
+  checkTitleHandler();
+  checkPriceHandler();
+  checkTypeHandler();
+
+  Array.from(form.elements).forEach(function (item) {
+    highlightValidity(item);
+  });
 };
 
 var initForm = function () {
@@ -369,14 +416,16 @@ var initForm = function () {
   var mainPinY = mainPinRect.y + MAIN_PIN.size / 2;
 
   address.value = 'x: ' + mainPinX + ' y: ' + mainPinY;
-  price.value = '1000';
 };
 
 initForm();
 
 form.addEventListener('change', function (event) {
-  synkFields(event);
+  syncFields(event);
 });
 
-title.addEventListener('invalid', checkTitleHandler);
-submit.addEventListener('click', formValidation);
+title.addEventListener('input', checkTitleHandler);
+price.addEventListener('input', checkPriceHandler);
+type.addEventListener('invalid', checkTypeHandler);
+
+submit.addEventListener('click', checkFormValidityHandler);
