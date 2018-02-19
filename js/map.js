@@ -57,10 +57,10 @@ var FIELDS_LIMITS = {
 var ERROR_MESSAGES = {
   required: 'Обязательное поле!',
   getMinLengthErrorText: function (val) {
-    return 'Длина поля должна быть не менее ' + val + ' символов!'
+    return 'Длина поля должна быть не менее ' + val + ' символов!';
   },
   getMaxLengthErrorText: function (val) {
-    return 'Длина поля должна быть не более ' + val + ' символов!'
+    return 'Длина поля должна быть не более ' + val + ' символов!';
   },
 };
 
@@ -371,7 +371,6 @@ var highlightValidity = function (field) {
 var checkFieldLength = function (element, min, max) {
   if (element.value.length < min) {
     element.setCustomValidity(ERROR_MESSAGES.getMinLengthErrorText(min));
-    return;
   } if (element.value.length > max) {
     element.setCustomValidity(ERROR_MESSAGES.getMinLengthErrorText(max));
   } else {
