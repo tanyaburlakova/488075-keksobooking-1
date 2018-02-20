@@ -42,8 +42,6 @@
 
   var form = document.querySelector('.notice__form');
   var submit = form.querySelector('.form__submit');
-  var formFieldsets = form.querySelectorAll('.form__element');
-  var address = form.querySelectorAll('input[name=address]')[0];
   var price = form.querySelectorAll('input[name=price]')[0];
   var title = form.querySelectorAll('input[name=title]')[0];
   var type = form.querySelectorAll('select[name=type]')[0];

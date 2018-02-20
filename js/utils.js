@@ -44,5 +44,5 @@
     removeClass: removeClass,
     getRandomLengthArray: getRandomLengthArray,
     highlightValidity: highlightValidity,
-  }
+  };
 })();
