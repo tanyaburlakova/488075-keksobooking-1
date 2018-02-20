@@ -112,7 +112,7 @@
 
       <fieldset disabled class="form__element">
         <label for="type">Тип жилья</label>
-        <select id="type" name="type" required class="linked-control">
+        <select id="type" name="type" required>
           <option value="flat" selected>Квартира</option>
           <option value="bungalo">Лачуга</option>
           <option value="house">Дом</option>
@@ -122,17 +122,17 @@
 
       <fieldset disabled class="form__element">
         <label for="price">Цена за ночь, руб.</label>
-        <input id="price" name="price" type="number" placeholder="5000" value='1000' required class="linked-control">
+        <input id="price" name="price" type="number" placeholder="5000" value='1000' required>
       </fieldset>
 
       <fieldset disabled class="form__element">
         <label for="timein">Время заезда и выезда</label>
-        <select id="timein" name="timein" required class="linked-control">
+        <select id="timein" name="timein" required>
           <option value="12:00" selected>После 12</option>
           <option value="13:00">После 13</option>
           <option value="14:00">После 14</option>
         </select>
-        <select id="timeout" name="timeout" title="Time to go out" required class="linked-control">
+        <select id="timeout" name="timeout" title="Time to go out" required>
           <option value="12:00" selected>Выезд до 12</option>
           <option value="13:00">Выезд до 13</option>
           <option value="14:00">Выезд до 14</option>
@@ -141,7 +141,7 @@
 
       <fieldset disabled class="form__element">
         <label for="room_number">Кол-во комнат</label>
-        <select id="room_number" name="rooms" required class="linked-control">
+        <select id="room_number" name="rooms" required>
           <option value="1" selected>1 комната</option>
           <option value="2">2 комнаты</option>
           <option value="3">3 комнаты</option>

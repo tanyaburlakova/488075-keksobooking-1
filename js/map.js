@@ -207,9 +207,13 @@ var form = document.querySelector('.notice__form');
 var submit = form.querySelector('.form__submit');
 var formFieldsets = form.querySelectorAll('.form__element');
 var address = form.querySelectorAll('input[name=address]')[0];
+var checkin = form.querySelectorAll('select[name=timein]')[0];
+var checkout = form.querySelectorAll('select[name=timeout]')[0];
 var price = form.querySelectorAll('input[name=price]')[0];
 var title = form.querySelectorAll('input[name=title]')[0];
 var type = form.querySelectorAll('select[name=type]')[0];
+var rooms = form.querySelectorAll('select[name=rooms]')[0];
+var guests = form.querySelectorAll('select[name=capacity]')[0];
 
 var pinsAddHandler = function () {
   var mainPinX = mainPinRect.x + MAIN_PIN.size / 2;
@@ -293,7 +297,7 @@ pins.addEventListener('keydown', function (event) {
   }
 });
 
-var linkedValues = {
+var linkedFields = {
   'type': {
     'linked': 'price',
     'flat': 1000,
@@ -320,44 +324,29 @@ var linkedValues = {
     '13:00': '13:00',
     '14:00': '14:00',
   },
-  'room_number': {
-    'linked': 'capacity',
-    '1': 1,
-    '2': 2,
-    '3': 3,
-    '100': 0,
-  },
 };
 
-var syncFields = function (event) {
+var linkedGuests = {
+  '1': [1],
+  '2': [1, 2],
+  '3': [1, 2, 3],
+  '100': [0],
+};
+
+var twoWayFieldsSync = function (event, selector) {
   var target = event.target;
+  var linked = linkedFields[target.id].linked;
+  var linkedVal = linkedFields[target.id][target.value];
 
-  highlightValidity(target);
+  selector.value = linkedVal;
+};
 
-  if (!target.classList.contains('linked-control')) {
-    return;
-  }
+var oneWayFieldsSync = function (event, selector) {
+  var linkedVal = linkedGuests[event.target.value];
 
-  var linked = linkedValues[target.id].linked;
-  var linkedVal = linkedValues[target.id][target.value];
-
-  form.querySelector('#' + linked).value = linkedVal;
-
-  if (target.id === 'room_number') {
-    var linkedElm = form.querySelector('.capacity');
-
-    for (var option = 0; option < linkedElm.length; option++) {
-      var mainVal = parseInt(target.value, 10);
-      var optionVal = parseInt(linkedElm[option].value, 10);
-
-      linkedElm[option].disabled = true;
-
-      if ((mainVal >= optionVal && optionVal !== 0 && mainVal !== 100) ||
-          (mainVal === 100 && optionVal === 0)) {
-        linkedElm[option].disabled = false;
-      }
-    }
-  }
+  Array.from(selector.options).forEach(function (item) {
+    item.disabled = linkedVal.includes(parseInt(item.value)) ? false : true;
+  });
 };
 
 var highlightValidity = function (field) {
@@ -419,8 +408,24 @@ var initForm = function () {
 
 initForm();
 
-form.addEventListener('change', function (event) {
-  syncFields(event);
+checkin.addEventListener('change', function (event) {
+  twoWayFieldsSync(event, checkout);
+});
+
+checkout.addEventListener('change', function (event) {
+  twoWayFieldsSync(event, checkin);
+});
+
+type.addEventListener('change', function (event) {
+  twoWayFieldsSync(event, price);
+});
+
+price.addEventListener('change', function (event) {
+  twoWayFieldsSync(event, type);
+});
+
+rooms.addEventListener('change', function (event) {
+  oneWayFieldsSync(event, guests);
 });
 
 title.addEventListener('input', checkTitleHandler);
