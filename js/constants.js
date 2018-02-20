@@ -4,7 +4,7 @@
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
   var MAIN_PIN_SIZE = 62;
-  var MAIN_PIN_CORNER_SIZE = 22;
+  var MAIN_PIN_CORNER_SIZE = 20;
   var PIN_ACTIVE_CLASS = 'active';
   var ERROR_CLASS = 'error';
 

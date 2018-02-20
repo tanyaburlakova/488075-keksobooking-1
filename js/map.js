@@ -20,8 +20,6 @@
     form.classList.remove('notice__form--disabled');
     window.pin.render(similarAds);
 
-    address.value = 'x: ' + mainPinX + ' y: ' + mainPinY;
-
     formFieldsets.forEach(function (item) {
       item.disabled = false;
     });
