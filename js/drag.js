@@ -6,7 +6,7 @@
   var dragElement = document.querySelector('.map__pin--main');
   var container = document.querySelector('.map__pinsoverlay').getBoundingClientRect();
   var dragZone = {
-    top: 100,
+    top: 150,
     right: container.width,
     bottom: 500,
   };
