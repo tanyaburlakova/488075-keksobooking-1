@@ -297,33 +297,24 @@ pins.addEventListener('keydown', function (event) {
   }
 });
 
-var linkedFields = {
-  'type': {
-    'linked': 'price',
-    'flat': 1000,
-    'bungalo': 0,
-    'house': 5000,
-    'palace': 10000,
-  },
-  'price': {
-    'linked': 'type',
-    '0': 'flat',
-    '1000': 'bungalo',
-    '5000': 'house',
-    '100000': 'palace',
-  },
-  'timein': {
-    'linked': 'timeout',
-    '12:00': '12:00',
-    '13:00': '13:00',
-    '14:00': '14:00',
-  },
-  'timeout': {
-    'linked': 'timein',
-    '12:00': '12:00',
-    '13:00': '13:00',
-    '14:00': '14:00',
-  },
+var apartsPriceRanges = {
+  'flat': 1000,
+  'bungalo': 0,
+  'house': 5000,
+  'palace': 10000,
+};
+
+var priceRanges = {
+  1000: 'flat',
+  0: 'bungalo',
+  5000: 'house',
+  10000: 'palace',
+};
+
+var checkTimes = {
+  '12:00': '12:00',
+  '13:00': '13:00',
+  '14:00': '14:00',
 };
 
 var linkedGuests = {
@@ -333,21 +324,30 @@ var linkedGuests = {
   '100': [0],
 };
 
-var twoWayFieldsSync = function (event, selector) {
-  var target = event.target;
-  var linked = linkedFields[target.id].linked;
-  var linkedVal = linkedFields[target.id][target.value];
+var syncFieldsService = function (syncData, selector, callback) {
+  var setValue = function (value) {
+    callback(syncData[value], selector);
+  }
 
-  selector.value = linkedVal;
+  return setValue;
+};
+
+var twoWayFieldsSync = function (value, selector) {
+  selector.value = value;
 };
 
 var oneWayFieldsSync = function (event, selector) {
-  var linkedVal = linkedGuests[event.target.value];
+  var newValue = linkedGuests[event.target.value];
 
   Array.from(selector.options).forEach(function (item) {
-    item.disabled = linkedVal.includes(parseInt(item.value)) ? false : true;
+    item.disabled = !newValue.includes(parseInt(item.value));
   });
 };
+
+var syncCheckIn = syncFieldsService(checkTimes, checkout, twoWayFieldsSync);
+var syncCheckOut = syncFieldsService(checkTimes, checkin, twoWayFieldsSync);
+var syncApartsPriceRanges = syncFieldsService(apartsPriceRanges, price, twoWayFieldsSync);
+var syncPriceRanges = syncFieldsService(apartsPriceRanges, price, twoWayFieldsSync);
 
 var highlightValidity = function (field) {
   if (field.validity.valid) {
@@ -409,19 +409,19 @@ var initForm = function () {
 initForm();
 
 checkin.addEventListener('change', function (event) {
-  twoWayFieldsSync(event, checkout);
+  syncCheckIn(event.target.value);
 });
 
 checkout.addEventListener('change', function (event) {
-  twoWayFieldsSync(event, checkin);
+  syncCheckOut(event.target.value);
 });
 
 type.addEventListener('change', function (event) {
-  twoWayFieldsSync(event, price);
+  syncApartsPriceRanges(event.target.value);
 });
 
 price.addEventListener('change', function (event) {
-  twoWayFieldsSync(event, type);
+  syncPriceRanges(event.target.value);
 });
 
 rooms.addEventListener('change', function (event) {
