@@ -332,11 +332,11 @@ var syncFieldsService = function (syncData, selector, callback) {
   return setValue;
 };
 
-var twoWayFieldsSync = function (value, selector) {
+var twoWaySyncFields = function (value, selector) {
   selector.value = value;
 };
 
-var oneWayFieldsSync = function (event, selector) {
+var oneWaySyncFields = function (event, selector) {
   var newValue = linkedGuests[event.target.value];
 
   Array.from(selector.options).forEach(function (item) {
@@ -344,10 +344,10 @@ var oneWayFieldsSync = function (event, selector) {
   });
 };
 
-var syncCheckIn = syncFieldsService(checkTimes, checkout, twoWayFieldsSync);
-var syncCheckOut = syncFieldsService(checkTimes, checkin, twoWayFieldsSync);
-var syncApartsPriceRanges = syncFieldsService(apartsPriceRanges, price, twoWayFieldsSync);
-var syncPriceRanges = syncFieldsService(apartsPriceRanges, price, twoWayFieldsSync);
+var syncCheckIn = syncFieldsService(checkTimes, checkout, twoWaySyncFields);
+var syncCheckOut = syncFieldsService(checkTimes, checkin, twoWaySyncFields);
+var syncApartsPriceRanges = syncFieldsService(apartsPriceRanges, price, twoWaySyncFields);
+var syncPriceRanges = syncFieldsService(apartsPriceRanges, price, twoWaySyncFields);
 
 var highlightValidity = function (field) {
   if (field.validity.valid) {
@@ -425,7 +425,7 @@ price.addEventListener('change', function (event) {
 });
 
 rooms.addEventListener('change', function (event) {
-  oneWayFieldsSync(event, guests);
+  oneWaySyncFields(event, guests);
 });
 
 title.addEventListener('input', checkTitleHandler);
